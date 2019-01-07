@@ -65,17 +65,22 @@ def handle_ship_position():
 
     for key, value in size.items():
         while True:
-            ship_place = input("Where you want place the {} (e.g A1): " .format(key))
+            ship_place = input("Where you want place the {} (e.g A1 or 1A): " .format(key))
             position = handle_user_coordinates(ship_place)
+            try:
+                if position[0] in numbers_of_alphabet.values() and 0 < int(position[1]) < 11:
+                    direction = input("Do you want to put the ship vertically (v) or horizontally? (h)")
 
-            if position[0] in numbers_of_alphabet.values() and 0 < int(position[1]) < 11:
-                direction = input("Do you want to put the ship vertically (v) or horizontally? (h)")
-
-                if direction == "h":
-                    handle_horizontal_position(value, grid_for_ship, position)
-                elif direction == "v":
-                    handle_vertical_position(value, grid_for_ship, position)
-                board_print(grid_for_ship)
+                    if direction == "h":
+                        handle_horizontal_position(value, grid_for_ship, position)
+                    elif direction == "v":
+                        handle_vertical_position(value, grid_for_ship, position)
+                    board_print(grid_for_ship)
+                    break
+                else:
+                    continue
+            except IndexError:
+                print("Please provide a value!\n")
 
     return grid_for_ship
 
@@ -98,7 +103,7 @@ def handle_shoot():
     numbers_of_alphabet = handle_alphabet()
 
     while True:
-        coordinates = input("Please, give me a position where you want to shoot (e.g A1): ").lower()
+        coordinates = input("Please, give me a position where you want to shoot (e.g A1 or 1A): ").lower()
         shoot = handle_user_coordinates(coordinates)
         if shoot[0] in numbers_of_alphabet.values() and 0 < int(shoot[1]) < 11:
             break
@@ -108,10 +113,12 @@ def handle_shoot():
 
 def handle_user_coordinates(coordinates):
     numbers_of_alphabet = handle_alphabet()
-
-    user_character = "".join([number for number in coordinates if not number.isdigit()])
-    user_number = "".join([number for number in coordinates if number.isdigit()])
-    coordinates = [numbers_of_alphabet.get(user_character)] + [int(user_number)]
+    try:
+        user_character = "".join([number for number in coordinates if not number.isdigit()])
+        user_number = "".join([number for number in coordinates if number.isdigit()])
+        coordinates = [numbers_of_alphabet.get(user_character)] + [int(user_number)]
+    except ValueError:
+        print("", end="")
 
     return coordinates
 
