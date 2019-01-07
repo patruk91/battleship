@@ -6,9 +6,6 @@ def main():
         board_print(grid)
 
 
-
-
-
 def update_board(shoot):
     grid = board_create()
     grid[shoot[1] - 1][shoot[0]] = "#"
@@ -50,8 +47,76 @@ def handle_format_line_in_board(grid):
     print(line)
 
 
+def ship_size():
+    size = {
+        "Carrier": 5,
+        "Battleship": 4,
+        "Cruiser": 3,
+        "Submarine": 3,
+        "Destroyer": 2,
+    }
+    return size
+
+
+def handle_ship_position():
+    size = ship_size()
+    numbers_of_alphabet = handle_alphabet()
+    grid_for_ship = board_create()
+
+    for key, value in size.items():
+        while True:
+            ship_place = input("Where you want place the {} (e.g A1): " .format(key))
+            position = handle_user_coordinates(ship_place)
+
+            if position[0] in numbers_of_alphabet.values() and 0 < int(position[1]) < 11:
+                direction = input("Do you want to put the ship vertically (v) or horizontally? (h)")
+
+                if direction == "h":
+                    handle_horizontal_position(value, grid_for_ship, position)
+                elif direction == "v":
+                    handle_vertical_position(value, grid_for_ship, position)
+                board_print(grid_for_ship)
+
+    return grid_for_ship
+
+
+def handle_horizontal_position(value, grid_for_ship, position):
+    while value > 0:
+        grid_for_ship[position[1] - 1][position[0] + value - 1] = "S"
+        value -= 1
+    return grid_for_ship
+
+
+def handle_vertical_position(value, grid_for_ship, position):
+    while value > 0:
+        grid_for_ship[position[1] + value - 2][position[0]] = "S"
+        value -= 1
+    return grid_for_ship
+
 
 def handle_shoot():
+    numbers_of_alphabet = handle_alphabet()
+
+    while True:
+        coordinates = input("Please, give me a position where you want to shoot (e.g A1): ").lower()
+        shoot = handle_user_coordinates(coordinates)
+        if shoot[0] in numbers_of_alphabet.values() and 0 < int(shoot[1]) < 11:
+            break
+
+    return shoot
+
+
+def handle_user_coordinates(coordinates):
+    numbers_of_alphabet = handle_alphabet()
+
+    user_character = "".join([number for number in coordinates if not number.isdigit()])
+    user_number = "".join([number for number in coordinates if number.isdigit()])
+    coordinates = [numbers_of_alphabet.get(user_character)] + [int(user_number)]
+
+    return coordinates
+
+
+def handle_alphabet():
     numbers_of_alphabet = {
         "a": 0,
         "b": 1,
@@ -64,33 +129,9 @@ def handle_shoot():
         "i": 8,
         "j": 9,
     }
+    return numbers_of_alphabet
 
 
-    while True:
-        shoot = input("Please, give me a position where you want to shoot (e.g A1): ").lower()
-        shoot_char = "".join([number for number in shoot if not number.isdigit()])
-        shoot_num = "".join([number for number in shoot if number.isdigit()])
-        shoot = [numbers_of_alphabet.get(shoot_char)] + [int(shoot_num)]
-
-        if shoot_char in numbers_of_alphabet and 0 < int(shoot_num) < 11:
-            break
-    return shoot
-
-
-
-
-
-# grid[numbers_of_alphabet.get(shoot_char)][int(shoot_num) - 1] = "#"
-
-    # try:
-    #     grid_1 = int(numbers_of_alphabet[shoot[0]])
-    #     grid_2 = int(shoot[1]) - 1  # we start count the table from one
-    #     print('git')
-    # except KeyError:
-    #     print('wrong nums')
-
-
-
-
+print(handle_ship_position())
 if __name__ == "__main__":
     main()
