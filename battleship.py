@@ -20,7 +20,6 @@ def board_create(grid=[]):
 
 
 def board_print(grid):
-
     alphabet = list(map(chr, range(65, 75)))
     print("    " + "   ".join(alphabet))
 
@@ -65,24 +64,53 @@ def handle_ship_position():
 
     for key, value in size.items():
         while True:
-            ship_place = input("Where you want place the {} (e.g A1 or 1A): " .format(key))
+            ship_place = input("Where you want place the {} (e.g A1 or 1A): ".format(key))
             position = handle_user_coordinates(ship_place)
             try:
                 if position[0] in numbers_of_alphabet.values() and 0 < int(position[1]) < 11:
                     direction = input("Do you want to put the ship vertically (v) or horizontally? (h)")
 
                     if direction == "h":
-                        handle_horizontal_position(value, grid_for_ship, position)
+                        correct_position = test_position(key, value, grid_for_ship, position)
+                        handle_horizontal_position(value, grid_for_ship, correct_position)
+
                     elif direction == "v":
                         handle_vertical_position(value, grid_for_ship, position)
+
                     board_print(grid_for_ship)
                     break
                 else:
                     continue
             except IndexError:
-                print("Please provide a value!\n")
+                print("Please provide a correct value!\n")
 
     return grid_for_ship
+
+
+def test_position(key, value, grid_for_ship, position):
+    cp = value
+
+
+    while True:
+        listaa = []
+        value = cp
+        while value > 0:
+            if grid_for_ship[position[1] - 1][position[0] + value - 1] == "S":
+                print("I can't place ship here! It's colliding with another!\n")
+                value -= 1
+                x = False
+                listaa.append(x)
+
+            else:
+                value -= 1
+                x = True
+                listaa.append(x)
+
+        if False in listaa:
+            ship_place = input("Where you want place the {} (e.g A1 or 1A): ".format(key))
+            position = handle_user_coordinates(ship_place)
+        else:
+            return position
 
 
 def handle_horizontal_position(value, grid_for_ship, position):
