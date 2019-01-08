@@ -7,8 +7,9 @@ def main():
 
 
 def update_board(shoot):
+    print(shoot)
     grid = board_create()
-    grid[shoot[1] - 1][shoot[0]] = "#"
+    grid[shoot[1]][shoot[0]] = "#"
     return grid
 
 
@@ -67,7 +68,7 @@ def handle_ship_position():
             ship_place = input("Where you want place the {} (e.g A1 or 1A): ".format(key))
             position = handle_user_coordinates(ship_place)
             try:
-                if position[0] in numbers_of_alphabet.values() and 0 < int(position[1]) < 11:
+                if position[0] in numbers_of_alphabet.values() and 0 <= int(position[1]) < 10:
                     direction = input("Do you want to put the ship vertically (v) or horizontally? (h)")
 
                     if direction == "h":
@@ -82,31 +83,28 @@ def handle_ship_position():
                 else:
                     continue
             except IndexError:
-                print("Please provide a correct value!\n")
+                print("The ship will be outside the board!\n")
 
     return grid_for_ship
 
 
 def test_position(key, value, grid_for_ship, position):
-    cp = value
-
+    value_copy = value
 
     while True:
-        listaa = []
-        value = cp
+        ship_in_grid = []
+        value = value_copy
         while value > 0:
             if grid_for_ship[position[1] - 1][position[0] + value - 1] == "S":
                 print("I can't place ship here! It's colliding with another!\n")
                 value -= 1
-                x = False
-                listaa.append(x)
+                ship_in_grid.append(True)
 
             else:
                 value -= 1
-                x = True
-                listaa.append(x)
+                ship_in_grid.append(False)
 
-        if False in listaa:
+        if True in ship_in_grid:
             ship_place = input("Where you want place the {} (e.g A1 or 1A): ".format(key))
             position = handle_user_coordinates(ship_place)
         else:
@@ -114,15 +112,17 @@ def test_position(key, value, grid_for_ship, position):
 
 
 def handle_horizontal_position(value, grid_for_ship, position):
-    while value > 0:
-        grid_for_ship[position[1] - 1][position[0] + value - 1] = "S"
+    value -= 1  # due to counting in list
+    while value >= 0:
+        grid_for_ship[position[1]][position[0] + value] = "S"
         value -= 1
     return grid_for_ship
 
 
 def handle_vertical_position(value, grid_for_ship, position):
-    while value > 0:
-        grid_for_ship[position[1] + value - 2][position[0]] = "S"
+    value -= 1  # due to counting in list
+    while value >= 0:
+        grid_for_ship[position[1] + value][position[0]] = "S"
         value -= 1
     return grid_for_ship
 
@@ -133,7 +133,7 @@ def handle_shoot():
     while True:
         coordinates = input("Please, give me a position where you want to shoot (e.g A1 or 1A): ").lower()
         shoot = handle_user_coordinates(coordinates)
-        if shoot[0] in numbers_of_alphabet.values() and 0 < int(shoot[1]) < 11:
+        if shoot[0] in numbers_of_alphabet.values() and 0 <= int(shoot[1]) < 10:
             break
 
     return shoot
@@ -144,7 +144,7 @@ def handle_user_coordinates(coordinates):
     try:
         user_character = "".join([number for number in coordinates if not number.isdigit()])
         user_number = "".join([number for number in coordinates if number.isdigit()])
-        coordinates = [numbers_of_alphabet.get(user_character)] + [int(user_number)]
+        coordinates = [numbers_of_alphabet.get(user_character)] + [int(user_number) - 1]
     except ValueError:
         print("", end="")
 
