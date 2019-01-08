@@ -69,7 +69,7 @@ def handle_ship_position():
             position = handle_user_coordinates(ship_place)
             try:
                 if position[0] in numbers_of_alphabet.values() and 0 <= int(position[1]) < 10:
-                    direction = input("Do you want to put the ship vertically (v) or horizontally? (h)")
+                    direction = input("Do you want to put the ship vertically (v) or horizontally? (h): ")
 
                     if direction == "h":
                         correct_position = test_position(key, value, grid_for_ship, position)
@@ -93,9 +93,9 @@ def test_position(key, value, grid_for_ship, position):
 
     while True:
         ship_in_grid = []
-        value = value_copy
-        while value > 0:
-            if grid_for_ship[position[1] - 1][position[0] + value - 1] == "S":
+        value = value_copy - 1
+        while value >= 0:
+            if grid_for_ship[position[1]][position[0] + value] == "S":
                 print("I can't place ship here! It's colliding with another!\n")
                 value -= 1
                 ship_in_grid.append(True)
