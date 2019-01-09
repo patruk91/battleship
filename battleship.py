@@ -69,40 +69,50 @@ def handle_ship_position():
             position = handle_user_coordinates(ship_place)
             try:
                 if position[0] in numbers_of_alphabet.values() and 0 <= int(position[1]) < 10:
-                    direction = input("Do you want to put the ship vertically (v) or horizontally? (h): ")
 
-                    if direction == "h":
-                        correct_position = test_position(key, value, grid_for_ship, position)
-                        handle_horizontal_position(value, grid_for_ship, correct_position)
+                    direction = handle_correct_direction()
+                    correct_position = test_position(key, value, grid_for_ship, position, direction)
 
-                    elif direction == "v":
-                        handle_vertical_position(value, grid_for_ship, position)
-
+                    handle_grid_position(value, grid_for_ship, correct_position, direction)
                     board_print(grid_for_ship)
                     break
                 else:
+                    print("The ship will be outside the board!\n"
+                          "Please provide a correct value!\n")
                     continue
             except IndexError:
-                print("The ship will be outside the board!\n")
+                print("The ship will be outside the board!\n"
+                      "Please provide a correct value!\n")
 
     return grid_for_ship
 
 
-def test_position(key, value, grid_for_ship, position):
+def test_position(key, value, grid_for_ship, position, direction):
     value_copy = value
 
     while True:
         ship_in_grid = []
         value = value_copy - 1
         while value >= 0:
-            if grid_for_ship[position[1]][position[0] + value] == "S":
-                print("I can't place ship here! It's colliding with another!\n")
-                value -= 1
-                ship_in_grid.append(True)
+            if direction == "h":
+                if grid_for_ship[position[1]][position[0] + value] == "S":
+                    print("I can't place ship here! It's colliding with another!\n")
+                    value -= 1
+                    ship_in_grid.append(True)
 
-            else:
-                value -= 1
-                ship_in_grid.append(False)
+                else:
+                    value -= 1
+                    ship_in_grid.append(False)
+
+            elif direction == "v":
+                if grid_for_ship[position[1] + value][position[0]] == "S":
+                    print("I can't place ship here! It's colliding with another!\n")
+                    value -= 1
+                    ship_in_grid.append(True)
+
+                else:
+                    value -= 1
+                    ship_in_grid.append(False)
 
         if True in ship_in_grid:
             ship_place = input("Where you want place the {} (e.g A1 or 1A): ".format(key))
@@ -111,20 +121,27 @@ def test_position(key, value, grid_for_ship, position):
             return position
 
 
-def handle_horizontal_position(value, grid_for_ship, position):
+def handle_grid_position(value, grid_for_ship, position, direction):
     value -= 1  # due to counting in list
+
     while value >= 0:
-        grid_for_ship[position[1]][position[0] + value] = "S"
-        value -= 1
+        if direction == "h":
+            grid_for_ship[position[1]][position[0] + value] = "S"
+            value -= 1
+        elif direction == "v":
+            grid_for_ship[position[1] + value][position[0]] = "S"
+            value -= 1
     return grid_for_ship
 
 
-def handle_vertical_position(value, grid_for_ship, position):
-    value -= 1  # due to counting in list
-    while value >= 0:
-        grid_for_ship[position[1] + value][position[0]] = "S"
-        value -= 1
-    return grid_for_ship
+def handle_correct_direction():
+    direction = input("Do you want to put the ship vertically (v) or horizontally? (h): ")
+    while True:
+        if direction == "v" or direction == "h":
+            return direction
+        else:
+            print("\nDirection value need to be: 'v' or 'h'!")
+            direction = input("Do you want to put the ship vertically (v) or horizontally? (h): ")
 
 
 def handle_shoot():
