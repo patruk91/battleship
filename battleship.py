@@ -1,5 +1,9 @@
+import os
+
+
 def main():
     board_print(board_create())
+    handle_ship_position()
     while True:
         shoot = handle_shoot()
         grid = update_board(shoot)
@@ -7,9 +11,24 @@ def main():
 
 
 def update_board(shoot):
-    print(shoot)
     grid = board_create()
-    grid[shoot[1]][shoot[0]] = "#"
+    if grid[shoot[1]][shoot[0]] == "S":
+        # os.system('clear')
+        grid[shoot[1]][shoot[0]] = "#"
+        print("YOU HAVE A HIT!")
+
+    elif grid[shoot[1]][shoot[0]] == "~":
+        # os.system('clear')
+        grid[shoot[1]][shoot[0]] = "&"
+        print("YOU MISS!")
+
+    else:
+        # os.system('clear')
+        print("YOU ALREADY SHOOT HERE!")
+        new_shoot = handle_shoot()
+        update_board(new_shoot)
+
+
     return grid
 
 
@@ -50,10 +69,10 @@ def handle_format_line_in_board(grid):
 def ship_size():
     size = {
         "Carrier": 5,
-        "Battleship": 4,
-        "Cruiser": 3,
-        "Submarine": 3,
-        "Destroyer": 2,
+        # "Battleship": 4,
+        # "Cruiser": 3,
+        # "Submarine": 3,
+        # "Destroyer": 2,
     }
     return size
 
@@ -123,7 +142,6 @@ def test_position(key, value, grid_for_ship, position, direction):
 
 def handle_grid_position(value, grid_for_ship, position, direction):
     value -= 1  # due to counting in list
-
     while value >= 0:
         if direction == "h":
             grid_for_ship[position[1]][position[0] + value] = "S"
@@ -131,6 +149,7 @@ def handle_grid_position(value, grid_for_ship, position, direction):
         elif direction == "v":
             grid_for_ship[position[1] + value][position[0]] = "S"
             value -= 1
+    handle_ship_indexes(grid_for_ship)
     return grid_for_ship
 
 
@@ -142,6 +161,13 @@ def handle_correct_direction():
         else:
             print("\nDirection value need to be: 'v' or 'h'!")
             direction = input("Do you want to put the ship vertically (v) or horizontally? (h): ")
+
+
+def handle_ship_indexes(grid_for_ship):
+    ship_indexes = [(index1, index2) for index1, value1 in enumerate(grid_for_ship)
+                    for index2, value2 in enumerate(value1) if value2 == 'S']
+
+    return ship_indexes
 
 
 def handle_shoot():
@@ -184,6 +210,5 @@ def handle_alphabet():
     return numbers_of_alphabet
 
 
-print(handle_ship_position())
 if __name__ == "__main__":
     main()
