@@ -3,16 +3,15 @@ import os
 
 def main():
     board_print(board_create())
-    #handle_ship_position()
     index = handle_ship_indexes(handle_ship_position())
-    print(index)
     while True:
         shoot = handle_shoot()
-        grid = update_board(shoot)
+        grid = update_board(shoot, index)
         board_print(grid)
+        index = update_ship_index(shoot, index)
 
 
-def update_board(shoot):
+def update_board(shoot, index):
     grid = board_create()
 
     if grid[shoot[1]][shoot[0]] == "S":
@@ -29,7 +28,7 @@ def update_board(shoot):
         # os.system('clear')
         print("YOU ALREADY SHOOT HERE!")
         new_shoot = handle_shoot()
-        update_board(new_shoot)
+        update_board(new_shoot, index)
 
     return grid
 
@@ -166,19 +165,40 @@ def handle_correct_direction():
 
 
 def handle_ship_indexes(grid_for_ship):
+    size = list(ship_size().values())
     ship_indexes = []
+
     for index1, value1 in enumerate(grid_for_ship):
         for index2, value2 in enumerate(value1):
             if value2 == 'S':
                 res = (index1, index2)
                 ship_indexes.append(res)
-            elif value2 == '#':
-                res = True
-                ship_indexes.append(res)
 
-    size = list(ship_size().values())
     ship_indexes = [ship_indexes[sum(size[:i]):sum(size[:i+1])] for i in range(len(size))]
     return ship_indexes
+
+
+def update_ship_index(shoot, ship_index):
+    ship_index = [[True if i == tuple(shoot[::-1]) else i for i in value] for value in ship_index]
+    display_info_about_destroy_ship(ship_index)
+    return ship_index
+
+
+def display_info_about_destroy_ship(ship_index):
+    size = ship_size()
+    i = 0
+    while i < len(ship_index):
+        if len(set(ship_index[i])) == 1:
+            for key, value in size.items():
+                if len(ship_index[i]) == value:
+                    print("YOU ANNIHILATE {}!" .format(key.upper()))
+            ship_index[i] = []
+            break
+        i += 1
+
+    # check if nested list is empty to handle win condition
+
+
 
 
 def handle_shoot():
