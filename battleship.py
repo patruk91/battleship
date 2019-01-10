@@ -195,10 +195,16 @@ def display_info_about_destroy_ship(ship_index):
             ship_index[i] = []
             break
         i += 1
+    win_condition(ship_index, size)
 
-    # check if nested list is empty to handle win condition
 
-
+def win_condition(ship_index, size):
+    i = 0
+    while i < len(ship_index):
+        if ship_index == [[]] * len(size):
+            print("YOU WON!")
+            break
+        i += 1
 
 
 def handle_shoot():
