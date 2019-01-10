@@ -3,7 +3,9 @@ import os
 
 def main():
     board_print(board_create())
-    handle_ship_position()
+    #handle_ship_position()
+    index = handle_ship_indexes(handle_ship_position())
+    print(index)
     while True:
         shoot = handle_shoot()
         grid = update_board(shoot)
@@ -12,6 +14,7 @@ def main():
 
 def update_board(shoot):
     grid = board_create()
+
     if grid[shoot[1]][shoot[0]] == "S":
         # os.system('clear')
         grid[shoot[1]][shoot[0]] = "#"
@@ -27,7 +30,6 @@ def update_board(shoot):
         print("YOU ALREADY SHOOT HERE!")
         new_shoot = handle_shoot()
         update_board(new_shoot)
-
 
     return grid
 
@@ -72,7 +74,7 @@ def ship_size():
         # "Battleship": 4,
         # "Cruiser": 3,
         # "Submarine": 3,
-        # "Destroyer": 2,
+        "Destroyer": 2,
     }
     return size
 
@@ -164,9 +166,18 @@ def handle_correct_direction():
 
 
 def handle_ship_indexes(grid_for_ship):
-    ship_indexes = [(index1, index2) for index1, value1 in enumerate(grid_for_ship)
-                    for index2, value2 in enumerate(value1) if value2 == 'S']
+    ship_indexes = []
+    for index1, value1 in enumerate(grid_for_ship):
+        for index2, value2 in enumerate(value1):
+            if value2 == 'S':
+                res = (index1, index2)
+                ship_indexes.append(res)
+            elif value2 == '#':
+                res = True
+                ship_indexes.append(res)
 
+    size = list(ship_size().values())
+    ship_indexes = [ship_indexes[sum(size[:i]):sum(size[:i+1])] for i in range(len(size))]
     return ship_indexes
 
 
