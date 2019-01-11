@@ -4,16 +4,19 @@ import os
 def main():
     board_print(board_create())
     index = handle_ship_indexes(handle_ship_position())
+    size = ship_size()
     while True:
         shoot = handle_shoot()
-        grid = update_board(shoot, index)
-        board_print(grid)
-        index = update_ship_index(shoot, index)
+        grid = update_board(shoot)
+        board_print(grid[0])
+        index = update_ship_index(grid[1], index)
+        game_win = win_condition(index, size)
 
+        if game_win is True:
+            break
 
-def update_board(shoot, index):
+def update_board(shoot):
     grid = board_create()
-
     if grid[shoot[1]][shoot[0]] == "S":
         # os.system('clear')
         grid[shoot[1]][shoot[0]] = "#"
@@ -27,10 +30,10 @@ def update_board(shoot, index):
     else:
         # os.system('clear')
         print("YOU ALREADY SHOOT HERE!")
-        new_shoot = handle_shoot()
-        update_board(new_shoot, index)
+        grid, shoot = update_board(handle_shoot())
+        return grid, shoot
 
-    return grid
+    return grid, shoot
 
 
 def board_create(grid=[]):
@@ -195,16 +198,18 @@ def display_info_about_destroy_ship(ship_index):
             ship_index[i] = []
             break
         i += 1
-    win_condition(ship_index, size)
-
 
 def win_condition(ship_index, size):
     i = 0
     while i < len(ship_index):
         if ship_index == [[]] * len(size):
             print("YOU WON!")
-            break
-        i += 1
+            i += 1
+            return True
+        else:
+            i += 1
+            return False
+
 
 
 def handle_shoot():
