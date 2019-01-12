@@ -5,8 +5,16 @@ import os
 
 
 def main():
-    bm.board_print(bm.board_create())
-    index = ship.handle_ship_indexes(ship.handle_ship_position())
+    map_create = bm.board_create()
+    bm.board_print(map_create)
+
+    ship_position_choice = input("Do you want put ships randomly? (y/n): ")
+    if ship_position_choice == "y":
+        ss.handle_random_coordinates()
+        index = ship.handle_ship_indexes(ship.handle_random_ship_position())
+    else:
+        index = ship.handle_ship_indexes(ship.handle_ship_position())
+
     size = ship.ship_size()
 
     while True:

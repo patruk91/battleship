@@ -1,3 +1,6 @@
+from random import randint, choice
+
+
 def handle_shoot():
     numbers_of_alphabet = handle_alphabet()
 
@@ -36,3 +39,13 @@ def handle_alphabet():
         "j": 9,
     }
     return numbers_of_alphabet
+
+
+def handle_random_coordinates():
+    random_character = (randint(0, 9), randint(0, 9))
+    return random_character
+
+
+def handle_random_direction():
+    direction = choice("v" + "h")
+    return direction

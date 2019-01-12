@@ -5,9 +5,9 @@ import shoot_system as ss
 def ship_size():
     size = {
         "Carrier": 5,
-        # "Battleship": 4,
-        # "Cruiser": 3,
-        # "Submarine": 3,
+        "Battleship": 4,
+        "Cruiser": 3,
+        "Submarine": 3,
         "Destroyer": 2,
     }
     return size
@@ -102,19 +102,20 @@ def handle_correct_direction():
 def handle_ship_indexes(grid_for_ship):
     size = list(ship_size().values())
     ship_indexes = []
-
     for index1, value1 in enumerate(grid_for_ship):
         for index2, value2 in enumerate(value1):
             if value2 == 'S':
                 res = (index1, index2)
                 ship_indexes.append(res)
-
+    print(ship_indexes) #sort by position, need function run and see
     ship_indexes = [ship_indexes[sum(size[:i]):sum(size[:i+1])] for i in range(len(size))]
+
     return ship_indexes
 
 
 def update_ship_index(shoot, ship_index):
     ship_index = [[True if i == tuple(shoot[::-1]) else i for i in value] for value in ship_index]
+
     display_info_about_destroy_ship(ship_index)
     return ship_index
 
@@ -142,3 +143,55 @@ def win_condition(ship_index, size):
         else:
             i += 1
             return False
+
+
+def handle_random_ship_position():
+    size = ship_size()
+    grid_for_ship = bm.board_create()
+    for number in range(len(size)):
+        while True:
+            position = ss.handle_random_coordinates()
+            print(position)
+            try:
+                direction = ss.handle_random_direction()
+                correct_position = test_random_position(size, grid_for_ship, position, direction)
+                value = list(size.values())
+                handle_grid_position(value[number], grid_for_ship, correct_position, direction)
+                break
+            except IndexError:
+                continue
+
+    bm.board_print(grid_for_ship)
+
+    return grid_for_ship
+
+
+def test_random_position(size, grid_for_ship, position, direction):
+    value_copy = list(size.values())
+    i = 0
+    while True:
+        ship_in_grid = []
+        value = value_copy[i] - 1
+        while value >= 0:
+            if direction == "h":
+                if grid_for_ship[position[1]][position[0] + value] == "S":
+                    value -= 1
+                    ship_in_grid.append(True)
+
+                else:
+                    value -= 1
+                    ship_in_grid.append(False)
+
+            elif direction == "v":
+                if grid_for_ship[position[1] + value][position[0]] == "S":
+                    value -= 1
+                    ship_in_grid.append(True)
+
+                else:
+                    value -= 1
+                    ship_in_grid.append(False)
+
+        if True in ship_in_grid:
+            position = ss.handle_random_coordinates()
+        else:
+            return position
